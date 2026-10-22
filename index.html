@@ -53,7 +53,7 @@ th{color:var(--mu);font-weight:600;font-size:12px}
 <div class="pr fin"><span class="op">=</span><span>Utilidad neta</span><b id="pu1">–</b></div>
 <div class="pr pct"><span class="op"></span><span>Utilidad neta %</span><b id="pu2">–</b></div>
 </div>
-<p class="note">Venta neta = precio de venta ÷ 1.215 (sin IGV ni RC) × transacciones. Costo de los productos = (costo base + IGV 18% + RC 3.5%) × transacciones. Comisión = precio de venta ÷ 1.215 × % comisión × transacciones. Subvenciones = subvención × transacciones. Utilidad neta = utilidad bruta − comisión + subvenciones. Utilidad neta % = utilidad neta ÷ venta neta.</p></div>
+<p class="note">Venta neta = precio de venta ÷ 1.215 (sin IGV ni RC) × transacciones. Costo de los productos = (costo base + IGV 18% + RC 3.5%) × transacciones. Comisión = precio de venta ÷ 1.215 × % comisión × transacciones. Subvenciones = subvención ÷ 1.18 (sin IGV) × transacciones. Utilidad neta = utilidad bruta − comisión + subvenciones. Utilidad neta % = utilidad neta ÷ venta neta.</p></div>
 <div><button class="btn" id="cp">Copiar resumen</button><button class="btn" id="cl">Limpiar combo</button> <span class="note" id="msg"></span></div>
 </main>
 <script>try{(function(){var l=document.querySelector('link[rel="apple-touch-icon"]');if(!l)return;var h=document.head||document.getElementsByTagName("head")[0];["apple-touch-icon","icon"].forEach(function(r){var e=document.createElement("link");e.rel=r;e.href=l.href;if(r==="icon")e.type="image/png";h.appendChild(e)});var m=document.createElement("meta");m.name="apple-mobile-web-app-title";m.content="Costeador PJ";h.appendChild(m)})()}catch(e){}</script>
@@ -87,7 +87,7 @@ function render(){const pv=parseFloat(document.getElementById('pv').value)||0,su
  set('sb',C.length?money(b):'–');set('si',C.length?money(ig):'–');set('sr',C.length?money(rc):'–');
  set('ss',C.length?money(igs):'–');set('fc',C.length&&pv?((b+ig+rc)/pv*100).toFixed(2)+'%':'–');set('fs',C.length&&den?(tot/den*100).toFixed(2)+'%':'–');
  const gasto=tot+com;set('sm',C.length?money(com):'–');set('fcc',C.length&&den?(gasto/den*100).toFixed(2)+'%':'–');
- const vn=pv/1.215*tx,ce=(b+ig+rc)*tx,ub=vn-ce,cm1=com*tx,sb1=sub*tx,un=ub-cm1+sb1,okp=C.length&&tx>0&&pv>0;set('pv1',okp?money2(vn):'–');set('pc1',okp?money2(ce):'–');set('pg1',okp?money2(ub):'–');set('pm1',okp?money2(cm1):'–');set('ps1',okp?money2(sb1):'–');set('pu1',okp?money2(un):'–');set('pu2',okp&&vn?(un/vn*100).toFixed(2)+'%':'–');
+ const vn=pv/1.215*tx,ce=(b+ig+rc)*tx,ub=vn-ce,cm1=com*tx,sb1=sub/1.18*tx,un=ub-cm1+sb1,okp=C.length&&tx>0&&pv>0;set('pv1',okp?money2(vn):'–');set('pc1',okp?money2(ce):'–');set('pg1',okp?money2(ub):'–');set('pm1',okp?money2(cm1):'–');set('ps1',okp?money2(sb1):'–');set('pu1',okp?money2(un):'–');set('pu2',okp&&vn?(un/vn*100).toFixed(2)+'%':'–');
  window.S={upct:vn?un/vn*100:0,b,ig,rc,igs,tot,pv,sub,den,pct,com,gasto,tx,vn,ce,ub,cm1,sb1,un,okp}}
 function showRes(){const q=document.getElementById('q').value,el=document.getElementById('res');
  found=q.trim()?search(q):[];el.innerHTML=found.length?'':(q.trim()?'<div class="empty">Sin resultados. Prueba con menos palabras.</div>':'');
