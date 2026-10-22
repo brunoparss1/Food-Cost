@@ -36,7 +36,7 @@ th{color:var(--mu);font-weight:600;font-size:12px}
 <div><label for="pv">Precio de venta (S/, con IGV)</label><input id="pv" type="number" step="0.01" inputmode="decimal" placeholder="29.90"></div>
 <div><label for="sv">Subvención (S/, con IGV)</label><input id="sv" type="number" step="0.01" inputmode="decimal" placeholder="0.00"></div>
 <div class="ck"><label><input type="checkbox" id="ng"> Sin Garlic</label><label><input type="checkbox" id="np"> Sin Pepperoncini</label></div>
-<div class="cm" style="grid-column:1/-1"><div><label for="cm">Comisión (%)</label><input id="cm" type="number" step="0.01" min="0" inputmode="decimal" placeholder="0"></div><div class="ck"><label><input type="checkbox" id="cq"> QR 4.83%</label><label><input type="checkbox" id="ci"> InApp 4%</label></div><div class="tx"><label for="tx">Transacciones estimadas</label><input id="tx" type="number" step="1" min="0" inputmode="numeric" placeholder="0"></div></div>
+<div class="cm" style="grid-column:1/-1"><div><label for="cm">Comisión (%)</label><input id="cm" type="number" step="0.01" min="0" inputmode="decimal" placeholder="0"></div><div class="ck"><label><input type="checkbox" id="cq"> QR 4.83%</label><label><input type="checkbox" id="ci"> InApp 4%</label><label><input type="checkbox" id="cr"> Rappi 13%</label><label><input type="checkbox" id="cy"> Pedidos Ya 14%</label></div><div class="tx"><label for="tx">Transacciones estimadas</label><input id="tx" type="number" step="1" min="0" inputmode="numeric" placeholder="0"></div></div>
 <div style="grid-column:1/-1"><label for="q">Buscar producto</label><input id="q" type="search" autocomplete="off" placeholder="pizza grande clásica pepperoni, coca cola 500, alitas x6…"></div>
 </div><div class="res" id="res"></div></div>
 <div class="card"><div class="tw"><table><thead><tr><th>Componente</th><th>Cant.</th><th>Costo</th><th>IGV 18%</th><th>RC 3.5%</th><th>Total</th><th>% PV</th><th></th></tr></thead><tbody id="body"></tbody></table></div><div id="emp" class="empty">Aún no hay componentes en el combo.</div></div>
@@ -98,10 +98,9 @@ document.getElementById('res').addEventListener('click',e=>{const b=e.target.clo
 document.getElementById('body').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
  if(d.p!==undefined)C[+d.p].q++;if(d.m!==undefined&&--C[+d.m].q<1)C.splice(+d.m,1);if(d.x!==undefined)C.splice(+d.x,1);render()});
 document.getElementById('pv').addEventListener('input',render);document.getElementById('sv').addEventListener('input',render);document.getElementById('tx').addEventListener('input',render);['ng','np'].forEach(i=>document.getElementById(i).addEventListener('change',render));
-{const cm=document.getElementById('cm'),cq=document.getElementById('cq'),ci=document.getElementById('ci');
- cq.addEventListener('change',()=>{if(cq.checked)ci.checked=false;cm.value=cq.checked?'4.83':'';render()});
- ci.addEventListener('change',()=>{if(ci.checked)cq.checked=false;cm.value=ci.checked?'4':'';render()});
- cm.addEventListener('input',()=>{const v=parseFloat(cm.value);cq.checked=v===4.83;ci.checked=v===4;render()})}
+{const cm=document.getElementById('cm'),O=[['cq',4.83],['ci',4],['cr',13],['cy',14]].map(([id,v])=>[document.getElementById(id),v]);
+ O.forEach(([el,v])=>el.addEventListener('change',()=>{O.forEach(([o])=>{if(o!==el)o.checked=false});cm.value=el.checked?String(v):'';render()}));
+ cm.addEventListener('input',()=>{const v=parseFloat(cm.value);O.forEach(([o,x])=>o.checked=v===x);render()})}
 document.getElementById('cl').onclick=()=>{C=[];render()};
 document.getElementById('cp').onclick=async()=>{const s=window.S;if(!C.length)return;
  const t=C.map(l=>`${l.q}× ${l.r.n}: ${money(ecost(l.r)*l.q)}`).join('\n')+`\nCosto base ${money(s.b)} | IGV ${money(s.ig)} | RC ${money(s.rc)}`+(s.sub?` | IGV subvención ${money(s.igs)}`:'')+(s.pv?`\nPrecio ${money(s.pv)} → Food Cost ${((s.b+s.ig+s.rc)/s.pv*100).toFixed(2)}%`:'')+(s.sub?`\nSubvención ${money(s.sub)} → Food Cost Subvencionado ${(s.tot/s.den*100).toFixed(2)}%`:'')+(s.pct?`\nComisión ${s.pct}% ${money(s.com)}`:'')+(s.den?`\nFood Cost Total ${(s.gasto/s.den*100).toFixed(2)}%`:'')+(s.okp?`\n${s.tx} transacciones\nVenta neta ${money2(s.vn)}\n− Costo de los productos (incluye IGV y RC) ${money2(s.ce)}\n= Utilidad bruta ${money2(s.ub)}\n− Comisión ${money2(s.cm1)}\n+ Subvenciones ${money2(s.sb1)}\n= Utilidad neta ${money2(s.un)}`:'');
