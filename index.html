@@ -41,8 +41,8 @@ th{color:var(--mu);font-weight:600;font-size:12px}
 </div><div class="res" id="res"></div></div>
 <div class="card"><div class="tw"><table><thead><tr><th>Componente</th><th>Cant.</th><th>Costo</th><th>IGV 18%</th><th>RC 3.5%</th><th>Total</th><th>% PV</th><th></th></tr></thead><tbody id="body"></tbody></table></div><div id="emp" class="empty">Aún no hay componentes en el combo.</div></div>
 <div class="card"><div class="sum">
-<div class="k"><span>Costo base</span><b id="sb">–</b></div><div class="k"><span>IGV 18%</span><b id="si">–</b></div><div class="k"><span>RC 3.5%</span><b id="sr">–</b></div><div class="k"><span>IGV subvención</span><b id="ss">–</b></div><div class="k"><span>Costo total</span><b id="st">–</b></div><div class="k big"><span>Food cost</span><b id="fc">–</b></div><div class="k"><span>Comisión</span><b id="sm">–</b></div><div class="k big"><span>Food cost + comisión</span><b id="fcc">–</b></div></div>
-<p class="note">Food cost = (costo + IGV 18% + RC 3.5% + IGV subvención) ÷ (precio de venta + subvención). Comisión = precio de venta ÷ 1.215 × % comisión. Food cost + comisión = (costo total + comisión) ÷ (precio de venta + subvención). Costos: base de recetas (SAP), <span id="nd"></span> productos.</p>
+<div class="k"><span>Costo base</span><b id="sb">–</b></div><div class="k"><span>IGV 18%</span><b id="si">–</b></div><div class="k"><span>RC 3.5%</span><b id="sr">–</b></div><div class="k big"><span>Food Cost</span><b id="fc">–</b></div><div class="k"><span>IGV Subvención</span><b id="ss">–</b></div><div class="k"><span>Food Cost Subvencionado</span><b id="fs">–</b></div><div class="k"><span>Comisión</span><b id="sm">–</b></div><div class="k big"><span>Food Cost Total</span><b id="fcc">–</b></div></div>
+<p class="note">Food Cost = (costo + IGV 18% + RC 3.5%) ÷ precio de venta. Food Cost Subvencionado = (costo + IGV + RC + IGV subvención) ÷ (precio de venta + subvención). Comisión = precio de venta ÷ 1.215 × % comisión. Food Cost Total = (costo + IGV + RC + IGV subvención + comisión) ÷ (precio de venta + subvención). Costos: base de recetas (SAP), <span id="nd"></span> productos.</p>
 </div>
 <div class="card"><div class="pl">
 <div class="pr"><span class="op"></span><span>Venta neta</span><b id="pv1">–</b></div>
@@ -83,8 +83,8 @@ function render(){const pv=parseFloat(document.getElementById('pv').value)||0,su
   tb.insertAdjacentHTML('beforeend',`<tr><td>${esc(l.r.n)}<br><span class="note">${esc([l.r.p,l.r.t,l.r.z,l.r.v].filter(Boolean).join(' · '))}${adj(l.r)?' · ajuste −'+money(adj(l.r)):''}</span></td><td><span class="q"><button data-m="${i}">−</button>${l.q}<button data-p="${i}">+</button></span></td><td>${money(c)}</td><td>${money(ig)}</td><td>${money(rc)}</td><td><b>${money(t)}</b></td><td>${den?(t/den*100).toFixed(1)+'%':'–'}</td><td><button class="x" data-x="${i}">×</button></td></tr>`)});
  document.getElementById('emp').style.display=C.length?'none':'block';
  const ig=b*.18,rc=b*.035,igs=sub*.18,tot=b+ig+rc+igs,set=(id,v)=>document.getElementById(id).textContent=v;
- set('sb',C.length?money(b):'–');set('si',C.length?money(ig):'–');set('sr',C.length?money(rc):'–');set('st',C.length?money(tot):'–');
- set('ss',C.length?money(igs):'–');set('fc',C.length&&den?(tot/den*100).toFixed(2)+'%':'–');
+ set('sb',C.length?money(b):'–');set('si',C.length?money(ig):'–');set('sr',C.length?money(rc):'–');
+ set('ss',C.length?money(igs):'–');set('fc',C.length&&pv?((b+ig+rc)/pv*100).toFixed(2)+'%':'–');set('fs',C.length&&den?(tot/den*100).toFixed(2)+'%':'–');
  const gasto=tot+com;set('sm',C.length?money(com):'–');set('fcc',C.length&&den?(gasto/den*100).toFixed(2)+'%':'–');
  const vn=pv/1.215*tx,ce=(b+ig+rc)*tx,ub=vn-ce,cm1=com*tx,sb1=sub*tx,un=ub-cm1+sb1,okp=C.length&&tx>0&&pv>0;set('pv1',okp?money2(vn):'–');set('pc1',okp?money2(ce):'–');set('pg1',okp?money2(ub):'–');set('pm1',okp?money2(cm1):'–');set('ps1',okp?money2(sb1):'–');set('pu1',okp?money2(un):'–');
  window.S={b,ig,rc,igs,tot,pv,sub,den,pct,com,gasto,tx,vn,ce,ub,cm1,sb1,un,okp}}
@@ -104,7 +104,7 @@ document.getElementById('pv').addEventListener('input',render);document.getEleme
  cm.addEventListener('input',()=>{const v=parseFloat(cm.value);cq.checked=v===4.83;ci.checked=v===4;render()})}
 document.getElementById('cl').onclick=()=>{C=[];render()};
 document.getElementById('cp').onclick=async()=>{const s=window.S;if(!C.length)return;
- const t=C.map(l=>`${l.q}× ${l.r.n}: ${money(ecost(l.r)*l.q)}`).join('\n')+`\nCosto base ${money(s.b)} | IGV ${money(s.ig)} | RC ${money(s.rc)}`+(s.sub?` | IGV subvención ${money(s.igs)}`:'')+` | Total ${money(s.tot)}`+(s.den?`\nPrecio ${money(s.pv)}`+(s.sub?` + subvención ${money(s.sub)}`:'')+` → Food cost ${(s.tot/s.den*100).toFixed(2)}%`:'')+(s.pct?`\nComisión ${s.pct}% ${money(s.com)} → Food cost + comisión ${s.den?(s.gasto/s.den*100).toFixed(2)+'%':'–'}`:'')+(s.okp?`\n${s.tx} transacciones\nVenta neta ${money2(s.vn)}\n− Costo de los productos (incluye IGV y RC) ${money2(s.ce)}\n= Utilidad bruta ${money2(s.ub)}\n− Comisión ${money2(s.cm1)}\n+ Subvenciones ${money2(s.sb1)}\n= Utilidad neta ${money2(s.un)}`:'');
+ const t=C.map(l=>`${l.q}× ${l.r.n}: ${money(ecost(l.r)*l.q)}`).join('\n')+`\nCosto base ${money(s.b)} | IGV ${money(s.ig)} | RC ${money(s.rc)}`+(s.sub?` | IGV subvención ${money(s.igs)}`:'')+(s.pv?`\nPrecio ${money(s.pv)} → Food Cost ${((s.b+s.ig+s.rc)/s.pv*100).toFixed(2)}%`:'')+(s.sub?`\nSubvención ${money(s.sub)} → Food Cost Subvencionado ${(s.tot/s.den*100).toFixed(2)}%`:'')+(s.pct?`\nComisión ${s.pct}% ${money(s.com)}`:'')+(s.den?`\nFood Cost Total ${(s.gasto/s.den*100).toFixed(2)}%`:'')+(s.okp?`\n${s.tx} transacciones\nVenta neta ${money2(s.vn)}\n− Costo de los productos (incluye IGV y RC) ${money2(s.ce)}\n= Utilidad bruta ${money2(s.ub)}\n− Comisión ${money2(s.cm1)}\n+ Subvenciones ${money2(s.sb1)}\n= Utilidad neta ${money2(s.un)}`:'');
  try{await navigator.clipboard.writeText(t);document.getElementById('msg').textContent='Copiado'}catch(e){document.getElementById('msg').textContent='No se pudo copiar'}};
 render();
 </script></body></html>
