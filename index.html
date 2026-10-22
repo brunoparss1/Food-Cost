@@ -17,7 +17,7 @@ main{max-width:860px;margin:0 auto;padding:16px}
 label{font-size:12px;color:var(--mu);display:block;margin-bottom:4px}
 input{width:100%;box-sizing:border-box;font:inherit;padding:10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx)}
 .row{display:grid;grid-template-columns:130px 130px 1fr;gap:12px}@media(max-width:560px){.row{grid-template-columns:1fr 1fr}.row>div:last-child,.row>div:nth-child(3){grid-column:1/-1}.ck{padding-top:0!important}}
-.ck{display:flex;gap:16px;flex-wrap:wrap;align-items:center;padding-top:22px}.ck label{display:flex;align-items:center;gap:7px;font-size:14px;color:var(--tx);margin:0;cursor:pointer}.ck input{width:auto;accent-color:var(--ac)}.cm{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end}.cm>div:first-child{width:130px}.cm .ck{padding-top:0!important;min-height:40px}.res{margin-top:8px;display:flex;flex-direction:column;gap:6px}
+.ck{display:flex;gap:16px;flex-wrap:wrap;align-items:center;padding-top:22px}.ck label{display:flex;align-items:center;gap:7px;font-size:14px;color:var(--tx);margin:0;cursor:pointer}.ck input{width:auto;accent-color:var(--ac)}.cm{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end}.pj .k b{white-space:nowrap}.pj .big b{font-size:24px}@media(max-width:560px){.pj .big{grid-column:1/-1}}.cm>div:first-child{width:130px}.cm>.tx{width:190px;margin-left:auto}@media(max-width:560px){.cm>.tx{margin-left:0}}.cm .ck{padding-top:0!important;min-height:40px}.res{margin-top:8px;display:flex;flex-direction:column;gap:6px}
 .r{display:flex;justify-content:space-between;gap:8px;text-align:left;padding:8px 10px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx);cursor:pointer;font:inherit}
 .r:hover,.r.top{border-color:var(--ac);background:var(--ac2)}.r small{color:var(--mu);display:block}.r b{white-space:nowrap}
 .tw{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:13px}
@@ -36,14 +36,17 @@ th{color:var(--mu);font-weight:600;font-size:12px}
 <div><label for="pv">Precio de venta (S/, con IGV)</label><input id="pv" type="number" step="0.01" inputmode="decimal" placeholder="29.90"></div>
 <div><label for="sv">Subvención (S/, con IGV)</label><input id="sv" type="number" step="0.01" inputmode="decimal" placeholder="0.00"></div>
 <div class="ck"><label><input type="checkbox" id="ng"> Sin Garlic</label><label><input type="checkbox" id="np"> Sin Pepperoncini</label></div>
-<div class="cm" style="grid-column:1/-1"><div><label for="cm">Comisión (%)</label><input id="cm" type="number" step="0.01" min="0" inputmode="decimal" placeholder="0"></div><div class="ck"><label><input type="checkbox" id="cq"> QR 4.83%</label><label><input type="checkbox" id="ci"> InApp 4%</label></div></div>
+<div class="cm" style="grid-column:1/-1"><div><label for="cm">Comisión (%)</label><input id="cm" type="number" step="0.01" min="0" inputmode="decimal" placeholder="0"></div><div class="ck"><label><input type="checkbox" id="cq"> QR 4.83%</label><label><input type="checkbox" id="ci"> InApp 4%</label></div><div class="tx"><label for="tx">Transacciones estimadas</label><input id="tx" type="number" step="1" min="0" inputmode="numeric" placeholder="0"></div></div>
 <div style="grid-column:1/-1"><label for="q">Buscar producto</label><input id="q" type="search" autocomplete="off" placeholder="pizza grande clásica pepperoni, coca cola 500, alitas x6…"></div>
 </div><div class="res" id="res"></div></div>
 <div class="card"><div class="tw"><table><thead><tr><th>Componente</th><th>Cant.</th><th>Costo</th><th>IGV 18%</th><th>RC 3.5%</th><th>Total</th><th>% PV</th><th></th></tr></thead><tbody id="body"></tbody></table></div><div id="emp" class="empty">Aún no hay componentes en el combo.</div></div>
 <div class="card"><div class="sum">
 <div class="k"><span>Costo base</span><b id="sb">–</b></div><div class="k"><span>IGV 18%</span><b id="si">–</b></div><div class="k"><span>RC 3.5%</span><b id="sr">–</b></div><div class="k"><span>IGV subvención</span><b id="ss">–</b></div><div class="k"><span>Costo total</span><b id="st">–</b></div><div class="k big"><span>Food cost</span><b id="fc">–</b></div><div class="k"><span>Comisión</span><b id="sm">–</b></div><div class="k big"><span>Food cost + comisión</span><b id="fcc">–</b></div></div>
 <p class="note">Food cost = (costo + IGV 18% + RC 3.5% + IGV subvención) ÷ (precio de venta + subvención). Comisión = precio de venta ÷ 1.215 × % comisión. Food cost + comisión = (costo total + comisión) ÷ (precio de venta + subvención). Costos: base de recetas (SAP), <span id="nd"></span> productos.</p>
-<button class="btn" id="cp">Copiar resumen</button><button class="btn" id="cl">Limpiar combo</button> <span class="note" id="msg"></span></div>
+</div>
+<div class="card"><div class="sum pj"><div class="k"><span>Venta neta estimada</span><b id="pv1">–</b></div><div class="k"><span>Costo estimado</span><b id="pc1">–</b></div><div class="k big"><span>Utilidad bruta estimada</span><b id="pu1">–</b></div></div>
+<p class="note">Venta neta estimada = precio de venta ÷ 1.215 (sin IGV ni RC) × transacciones. Costo estimado = (costo base + comisión) × transacciones. Utilidad bruta estimada = venta neta − costo estimado. La subvención no entra en esta proyección.</p></div>
+<div><button class="btn" id="cp">Copiar resumen</button><button class="btn" id="cl">Limpiar combo</button> <span class="note" id="msg"></span></div>
 </main>
 <script>try{(function(){var l=document.querySelector('link[rel="apple-touch-icon"]');if(!l)return;var h=document.head||document.getElementsByTagName("head")[0];["apple-touch-icon","icon"].forEach(function(r){var e=document.createElement("link");e.rel=r;e.href=l.href;if(r==="icon")e.type="image/png";h.appendChild(e)});var m=document.createElement("meta");m.name="apple-mobile-web-app-title";m.content="Costeador PJ";h.appendChild(m)})()}catch(e){}</script>
 <script>
@@ -57,6 +60,7 @@ const SZ=new Set(['Mediana','Grande','Familiar','Super Familiar']),G=D.find(r=>r
 function adj(r){if(r.p!=='Pizza'||!SZ.has(r.z))return 0;let a=0;if(document.getElementById('ng').checked&&G)a+=G.c;if(document.getElementById('np').checked&&PP)a+=PP.c;return a}
 const ecost=r=>Math.max(0,r.c-adj(r));
 const money=v=>'S/ '+v.toFixed(2);
+const money2=v=>(v<0?'−':'')+'S/ '+Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function search(q){let s=N(q);SYN.forEach(([a,b])=>s=s.replace(a,b));
  let t=s.split(/[^a-z0-9.]+/).filter(x=>x&&!STOP.has(x));if(!t.length)return[];
@@ -66,7 +70,7 @@ function search(q){let s=N(q);SYN.forEach(([a,b])=>s=s.replace(a,b));
   if(!wantsV&&(r.v==='Tradicional'||r.v===''))sc+=2;
   if(wantsV&&t.some(x=>r.nv.includes(x)))sc+=1;return{r,sc}}).sort((a,b)=>b.sc-a.sc||a.r.c-b.r.c).slice(0,8).map(x=>x.r)}
 let C=[],found=[];
-function render(){const pv=parseFloat(document.getElementById('pv').value)||0,sub=parseFloat(document.getElementById('sv').value)||0,den=pv+sub,pct=parseFloat(document.getElementById('cm').value)||0,com=pv/1.215*pct/100;
+function render(){const pv=parseFloat(document.getElementById('pv').value)||0,sub=parseFloat(document.getElementById('sv').value)||0,den=pv+sub,pct=parseFloat(document.getElementById('cm').value)||0,com=pv/1.215*pct/100,tx=Math.max(0,Math.floor(parseFloat(document.getElementById('tx').value)||0));
  let b=0;const tb=document.getElementById('body');tb.innerHTML='';
  C.forEach((l,i)=>{const c=ecost(l.r)*l.q;b+=c;const ig=c*.18,rc=c*.035,t=c+ig+rc;
   tb.insertAdjacentHTML('beforeend',`<tr><td>${esc(l.r.n)}<br><span class="note">${esc([l.r.p,l.r.t,l.r.z,l.r.v].filter(Boolean).join(' · '))}${adj(l.r)?' · ajuste −'+money(adj(l.r)):''}</span></td><td><span class="q"><button data-m="${i}">−</button>${l.q}<button data-p="${i}">+</button></span></td><td>${money(c)}</td><td>${money(ig)}</td><td>${money(rc)}</td><td><b>${money(t)}</b></td><td>${den?(t/den*100).toFixed(1)+'%':'–'}</td><td><button class="x" data-x="${i}">×</button></td></tr>`)});
@@ -75,7 +79,8 @@ function render(){const pv=parseFloat(document.getElementById('pv').value)||0,su
  set('sb',C.length?money(b):'–');set('si',C.length?money(ig):'–');set('sr',C.length?money(rc):'–');set('st',C.length?money(tot):'–');
  set('ss',C.length?money(igs):'–');set('fc',C.length&&den?(tot/den*100).toFixed(2)+'%':'–');
  const gasto=tot+com;set('sm',C.length?money(com):'–');set('fcc',C.length&&den?(gasto/den*100).toFixed(2)+'%':'–');
- window.S={b,ig,rc,igs,tot,pv,sub,den,pct,com,gasto}}
+ const vn=pv/1.215*tx,ce=(b+com)*tx,ub=vn-ce,okp=C.length&&tx>0&&pv>0;set('pv1',okp?money2(vn):'–');set('pc1',okp?money2(ce):'–');set('pu1',okp?money2(ub):'–');
+ window.S={b,ig,rc,igs,tot,pv,sub,den,pct,com,gasto,tx,vn,ce,ub,okp}}
 function showRes(){const q=document.getElementById('q').value,el=document.getElementById('res');
  found=q.trim()?search(q):[];el.innerHTML=found.length?'':(q.trim()?'<div class="empty">Sin resultados. Prueba con menos palabras.</div>':'');
  found.forEach((r,i)=>el.insertAdjacentHTML('beforeend',`<button class="r${i?'':' top'}" data-a="${i}"><span>${esc(r.n)}<small>${esc([r.p,r.t,r.z,r.v].filter(Boolean).join(' · '))}</small></span><b>${money(r.c)}</b></button>`))}
@@ -85,14 +90,14 @@ document.getElementById('q').addEventListener('keydown',e=>{if(e.key==='Enter'&&
 document.getElementById('res').addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(b)add(found[+b.dataset.a])});
 document.getElementById('body').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
  if(d.p!==undefined)C[+d.p].q++;if(d.m!==undefined&&--C[+d.m].q<1)C.splice(+d.m,1);if(d.x!==undefined)C.splice(+d.x,1);render()});
-document.getElementById('pv').addEventListener('input',render);document.getElementById('sv').addEventListener('input',render);['ng','np'].forEach(i=>document.getElementById(i).addEventListener('change',render));
+document.getElementById('pv').addEventListener('input',render);document.getElementById('sv').addEventListener('input',render);document.getElementById('tx').addEventListener('input',render);['ng','np'].forEach(i=>document.getElementById(i).addEventListener('change',render));
 {const cm=document.getElementById('cm'),cq=document.getElementById('cq'),ci=document.getElementById('ci');
  cq.addEventListener('change',()=>{if(cq.checked)ci.checked=false;cm.value=cq.checked?'4.83':'';render()});
  ci.addEventListener('change',()=>{if(ci.checked)cq.checked=false;cm.value=ci.checked?'4':'';render()});
  cm.addEventListener('input',()=>{const v=parseFloat(cm.value);cq.checked=v===4.83;ci.checked=v===4;render()})}
 document.getElementById('cl').onclick=()=>{C=[];render()};
 document.getElementById('cp').onclick=async()=>{const s=window.S;if(!C.length)return;
- const t=C.map(l=>`${l.q}× ${l.r.n}: ${money(ecost(l.r)*l.q)}`).join('\n')+`\nCosto base ${money(s.b)} | IGV ${money(s.ig)} | RC ${money(s.rc)}`+(s.sub?` | IGV subvención ${money(s.igs)}`:'')+` | Total ${money(s.tot)}`+(s.den?`\nPrecio ${money(s.pv)}`+(s.sub?` + subvención ${money(s.sub)}`:'')+` → Food cost ${(s.tot/s.den*100).toFixed(2)}%`:'')+(s.pct?`\nComisión ${s.pct}% ${money(s.com)} → Food cost + comisión ${s.den?(s.gasto/s.den*100).toFixed(2)+'%':'–'}`:'');
+ const t=C.map(l=>`${l.q}× ${l.r.n}: ${money(ecost(l.r)*l.q)}`).join('\n')+`\nCosto base ${money(s.b)} | IGV ${money(s.ig)} | RC ${money(s.rc)}`+(s.sub?` | IGV subvención ${money(s.igs)}`:'')+` | Total ${money(s.tot)}`+(s.den?`\nPrecio ${money(s.pv)}`+(s.sub?` + subvención ${money(s.sub)}`:'')+` → Food cost ${(s.tot/s.den*100).toFixed(2)}%`:'')+(s.pct?`\nComisión ${s.pct}% ${money(s.com)} → Food cost + comisión ${s.den?(s.gasto/s.den*100).toFixed(2)+'%':'–'}`:'')+(s.okp?`\n${s.tx} transacciones → Venta neta ${money2(s.vn)} | Costo ${money2(s.ce)} | Utilidad bruta ${money2(s.ub)}`:'');
  try{await navigator.clipboard.writeText(t);document.getElementById('msg').textContent='Copiado'}catch(e){document.getElementById('msg').textContent='No se pudo copiar'}};
 render();
 </script></body></html>
